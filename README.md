@@ -1,4 +1,5 @@
-# Magic-SSG is a simple Static Site Generator tool, and it can help you to generate .html from . txt files. Current version is 0.1 
+# Magic Static Site Generator
+>is a simple Static Site Generator tool, and it can help you to generate .html from . txt files. Current version is 0.1 
 Features
 So far, this tool has the following functions:
 •	Open a .txt file and generate a .html file
