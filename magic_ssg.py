@@ -1,6 +1,7 @@
 import argparse
 import os
 import shutil
+import sys
 
 DIST_FOLDER = "dist"
 
@@ -92,8 +93,15 @@ def main():
                         version="%(prog)s 0.1", help="display tool name and version.")
     parser.add_argument(
         "-i", "--input", help="specify an input file or folder to be processed.", required=True)
+    parser.add_argument('-o', '--output', nargs=1,
+                        help='specify a different output directory')
     args = parser.parse_args()
     input = args.input
+
+    # if no input, exit the system and print error information
+    if input is None:
+        print("ERROR: input must not be blank")
+        sys.exit(1)
 
     all_files = []
     folder = ""
