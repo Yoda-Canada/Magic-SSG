@@ -5,16 +5,18 @@ import shutil
 DIST_FOLDER = "dist"
 
 
-# find all .txt in directory
 def get_txt_files(directory):
-    for root, dirs, files in os.walk(r"directory"):
+    txt_files = []
+    for root, dirs, files in os.walk(directory):
         for file in files:
             if file.endswith('.txt'):
-                txt_files = os.path.join(root, file)
-                return list(txt_files)
+                file_path = os.path.join(root, file)
+                txt_files.append(file_path)
+    return txt_files
 
 
 # Look for a title
+
 def get_title(file_path):
     i = 0
     title = ""
@@ -99,6 +101,8 @@ def main():
     if not input.endswith(".txt"):
         folder = input + "/"
         all_files = get_txt_files(folder)
+    else:
+        all_files.append(input)
 
     for file in all_files:
         file_path = folder + file
