@@ -8,7 +8,11 @@
 ## Installation
 > Make sure you have installed Python version 3.8.5 or above.
 ## Sample Use
-1. python magic_ssg.py --input <file name or folder name>
-2. python magic_ssg.py --i <file name or folder name>
-3. python magic_ssg.py –v
-4. python magic_ssg.py –h
+1. Generate a .html file from a file or folder:
+ `python magic_ssg.py -i/--input <file name or folder name>`
+  
+2. Check the tool's version
+`python magic_ssg.py –v/--version`
+  
+3. Display how to use the tool
+`python magic_ssg.py –h`
