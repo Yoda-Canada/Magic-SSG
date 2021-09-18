@@ -27,7 +27,7 @@
 
 ## Example
   
-> Full list of features:
+> ** Full list of features: **
   
 ![Alt Text](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/lvd5ao4h7r1bm1prpk4g.png)
   
