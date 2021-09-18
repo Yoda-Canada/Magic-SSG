@@ -27,14 +27,14 @@
 
 ## Example
   
-> ** Full list of features: **
+### Full list of features: 
   
 ![Alt Text](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/lvd5ao4h7r1bm1prpk4g.png)
   
-> input file:
+### input file:
   
 ![Alt Text](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/r2lv22xz6b8byl84cn8r.png)
   
-> output file:
+### output file:
   
 ![Alt Text](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/r08erike6kspvnx3yd9u.png)
