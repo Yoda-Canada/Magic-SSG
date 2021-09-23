@@ -6,40 +6,19 @@ import sys
 DIST_FOLDER = "dist"
 
 
-# def get_txt_files(directory):
-#     txt_files = []
-#     for root, dirs, files in os.walk(directory):
-#         for file in files:
-#             if file.endswith('.txt'):
-#                 file_path = os.path.join(root, file)
-#                 txt_files.append(file_path)
-#     return txt_files
-
 def get_txt_files(directory):
     txt_files = []
     for root, dirs, files in os.walk(directory):
         for file in files:
-            file_path = os.path.join(root, file)
             if file.endswith('.txt'):
                 file_path = os.path.join(root, file)
                 txt_files.append(file_path)
     return txt_files
 
 
-def get_md_files(directory):
-    md_files = []
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            file_path = os.path.join(root, file)
-            if file.endswith('.md'):
-                file_path = os.path.join(root, file)
-                md_files.append(file_path)
-    return md_files
-
 # Look for a title
 
-
-def get_txt_title(file_path):
+def get_title(file_path):
     i = 0
     title = ""
     # Read top 3 lines one by one.
@@ -52,29 +31,12 @@ def get_txt_title(file_path):
                     break
                 elif not len(title) or title.startswith("#"):
                     continue
+                # elif len(title) or title.startswith("#"):
                 else:
                     return title
 
 
-def get_md_title(file_path):
-    i = 0
-    title = ""
-    # Read top 3 lines one by one.
-    with open(file_path, "r", encoding="utf8") as input_file:
-        for i in range(3):
-            for line in input_file.readlines():
-                i += 1
-                title = line.strip()
-                if i == 3:
-                    break
-                elif not len(title):
-                    continue
-                elif title.startswith("#") or title.startswith("##") or title.startswith("###"):
-                    return title
-
 # Returns bodycont with html format.
-
-
 def generate_content(file_path, title):
     titled_format = "<h1>{}</h1>\n\n\n{}"
     content = ""
@@ -144,50 +106,20 @@ def main():
     all_files = []
     folder = ""
 
-    if not input.endswith(".md"):
-        #folder = input + "/"
-        all_files = get_md_files(folder)
-    else:
-        all_files.append(input)
-
-    for file in all_files:
-        file_path = folder + file
-        title = get_md_title(file_path)
-        file_path = folder + file
-        title = get_md_title(file_path)
-        bodycont = generate_content(file_path, title)
-        html = format_to_html(file, title, bodycont)
-        output_result(file, html)
-
     if not input.endswith(".txt"):
-        #folder = input + "/"
+        folder = input + "/"
         all_files = get_txt_files(folder)
     else:
         all_files.append(input)
 
     for file in all_files:
         file_path = folder + file
-        title = get_txt_title(file_path)
+        title = get_title(file_path)
         file_path = folder + file
-        title = get_txt_title(file_path)
+        title = get_title(file_path)
         bodycont = generate_content(file_path, title)
         html = format_to_html(file, title, bodycont)
         output_result(file, html)
-
-    # if not input.endswith(".md"):
-    #     folder = input + "/"
-    #     all_files = get_md_files(folder)
-    # else:
-    #     all_files.append(input)
-
-    # for file in all_files:
-    #     file_path = folder + file
-    #     title = get_md_title(file_path)
-    #     file_path = folder + file
-    #     title = get_md_title(file_path)
-    #     bodycont = generate_content(file_path, title)
-    #     html = format_to_html(file, title, bodycont)
-    #     output_result(file, html)
 
 
 main()
