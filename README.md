@@ -1,16 +1,16 @@
 # Magic-SSG
 1.  add a new function named "get_md_body", and it can parse .md file to get header and paragraphs.
 
-        > def get_md_body(file, out):
+        >     def get_md_body(file, out):
 
-        >    with open(file, 'r', encoding=encode) as f:
-        >        for lines in f.readlines():
-        >            # adding header
-        >            if lines.startswith("#"):
-        >                out.extend([indent(tabDepth) + o_tag('h1') +
-        >                            lines.lstrip("#").strip() + clo_tag(),
-        >                            indent(tabDepth) + o_tag('p')])  # opening first paragraph
-
+    >        with open(file, 'r', encoding=encode) as f:
+    >            for lines in f.readlines():
+    >                # adding header
+    >                if lines.startswith("#"):
+    >                    out.extend([indent(tabDepth) + o_tag('h1') +
+    >                                lines.lstrip("#").strip() + clo_tag(),
+    >                                indent(tabDepth) + o_tag('p')])  # opening first paragraph
+    >
     >            # the line has italic markdown
     >
     >        pline1 = re.sub(r'(_[^\r\n\_].*?_)|(\*[^\r\n\*].*?\*)',
