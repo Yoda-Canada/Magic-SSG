@@ -1,160 +1,184 @@
-#!/usr/local/bin/python3
-###########################################################
-
-
-#                txt-to-html-page
-###########################################################
 import argparse
 import os
-import sys
-#from collections import deque
+import shutil
+import re
+
+DIST_FOLDER = "dist"
 
 
+def get_files(directory):
+    txt_files = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if type_of_supported_file(file):   #if it is not False, then it is something out of supported
+                file_path = os.path.join(root, file)
+                txt_files.append(file_path)
 
-cloTagStack = []  # store closing tags
-
-
-def o_tag(tag, params_str=None, close_tag=False, indent=""):
-    '''
-    Takes tag, generates closing tag, to be used with cloTag function
-    Allows to use one-liner tags, like <link href=params_str> if close_tag is set to True
-
-    :param tag: "html tag value"
-    :param params_str: integ parameters, like [name="viewport" content="width=device-width, initial-scale=1"]
-    :param close_tag: if this tag can close itself, and does not need separate closing tag, set to TRUE
-    :return: opening teg with some optional parameters
-    '''
-
-    tag_line = indent + "<" + tag
-    if params_str:
-        tag_line += params_str
-    if close_tag is False:
-        global cloTagStack
-        cloTagStack.append("</"+ tag + ">")
-        return tag_line + ">"
-
-    return tag_line
+    return files
 
 
-def clo_tag():
-    """
-    closes the tag, that was open by the previous o_tag function
-    :return:
-    """
-    global cloTagStack
-    return cloTagStack.pop()
+# Look for a title
+
+def get_txt_title(file_name):
+    i = 0
+    title = ""
+    # Read top 3 lines one by one.
+    with open(file_name, "r", encoding="utf8") as input_file:
+        for i in range(3):
+            for line in input_file.readlines():
+                i += 1
+                title = line.strip()
+                if i == 3:
+                    break
+                elif not len(title) or title.startswith("#"):
+                    continue
+                # elif len(title) or title.startswith("#"):
+                else:
+                    return title
+
+def get_grand_title(file_name): #should be good for both .md and .txt
+    title = ""
+
+    with open(file_name, "r", encoding="utf8") as input_file:
+        line = input_file.readline()
+        while line in ["/n", "/r/n"]:  # loop in case first few lines are empty by mistake
+            line = input_file.readline()
+        if not line.startswith("#") \
+                or (input_file.readline() in ["/n", "/r/n"]
+                    and input_file.readline() in ["/n", "/r/n"]):
+            return False  # if line does not starts with # or at least has next 2 lines empty, then it is not a title
+        title = line.strip()
+        title = title.strip("#")
+
+    return title
 
 
-def indent(amount, thing="\t"):
-    '''
-    allows to add indentation.
-    :param amount: depth of indentation
-    :param thing: indentation symbol, such as " ", "/t", "/n"
-    :return: string of indentation symbols of needed depth
-    '''
-    return thing * amount
+# Returns bodycont with html format.
+def generate_txt_content(file_path, title):
+    titled_format = "<h1>{}</h1>\n\n\n{}"
 
-def getbody(file, out):
-    '''
-    parses txt file to get header and paragraphs
-    :param file: name of the txt file to open
-    :param out: array with body
-    :return:
-    '''
-    count = 0
-    i=0
-    global tabDepth
-    tabDepth = 1
-    with open (file, 'r', encoding=encode) as f:
-        lines = f.readlines()
+    content = ""
 
-        #adding header and opening first paragraph
-        out.extend([indent(tabDepth) + o_tag('h1') +
-                   lines[0].rstrip() + clo_tag(),
-                   indent(tabDepth) + o_tag('p')]) # opening first paragraph
+    with open(file_path, "r", encoding="utf8") as input_file:
+        if (title == ""):
+            content = input_file.read()[4:]
+            content = "<p>" + content
+            content = content.replace("\n\n", "</p>\n<p>")
+            content = content + "</p>"
+            content = titled_format.format(title, content)
+            return content
+        else:
+            content = input_file.read()
+            content = content.split("\n", 3)[3]
+            content = "<p>" + content
+            content = content.replace("\n\n", "</p>\n<p>")
+            content = content + "</p>"
+            content = titled_format.format(title, content)
+            return content
 
-        for i in range(3, len(lines)):
-            if lines[i] in ['\n', '\r\n']:
-                out.extend([indent(tabDepth) + clo_tag(), #closing previous paragraph
-                            indent(tabDepth) + o_tag('p')])
-                continue                                        #who uses 'continue' nowdays, right?
-            out.append(indent(tabDepth + 1) + lines[i].rstrip())
+def generate_md_content(file_path):
+    with open(file_path, "r", encoding="utf8") as input_file:
+        content = input_file.read()
 
-    out.append(indent(tabDepth)+ clo_tag())
-    return 1
+        # # TODO code block recognision
+        # content = re.sub(r'(```\s+```)',
+        #                  lambda s: "<pre>{}</pre>".format(s[0][3:-3]), #[3:-3] ``` elements
+        #                  content)
+        content = content.split("\n", 3)[3]
+        content = "<p>" + content
+        content = content.replace("\n\n", "</p>\n<p>")
+        content = content + "</p>"
+
+    #The re.sub() toolevaluates a pattern and, for each valid match, it calls a method (or lambda):
+        # source https://www.thepoorcoder.com/regex-substitution-solution/
+        # https://www.thegeekstuff.com/2014/07/advanced-python-regex/
+        #bold
+        content = re.sub(r'(__[^\r\n\_].*?__)|(\*\*[^\r\n\*].*?\*\*)', # regexp explained lower
+                         lambda s: "<b>{}</b>".format(s[0][2:-2]),  # instead of string to replace with, we are passing a
+                         content)
+
+        #(__[ ^\r\n\_].* ?__) | (\ * \ *[^ \r\n\ *].* ?\ * \ *) explained
+        #two underscores, then any character exept then new line or one more underscore, then one or more of any
+        # characters followed by two underscores. OR same combination, but with * instead of _
+
+        #italic
+        content = re.sub(r'(_[^\r\n\_].*?_)|(\*[^\r\n\*].*?\*)', lambda s: "<i>{}</i>".format(s[0][1:-1]), content)
 
 
-def create_html(file, lines): #this is console debug version of this function
-    for line in lines:
-        print (line)
-    return
+        #header
+        headerTag = lambda s: '{endpTag}<h{size}>{regexContent}</h{size}>{pTag}'.format(
+            endpTag="</p>\n\n" if s.group(1) == "\n" else "", size=s.group(2).count('#'), regexContent=s.group(3),
+            pTag="\n\n<p>" if s.group(4) == "\n" else "")
+        content = re.sub(r'(|(?<!\n)\n|<p>)(#{1,5})\s(.*)(<\/p>|(?<!<\/p>)\n|$)', headerTag, content)
 
-if __name__ == '__main__':
-    encode = "utf-8"
-    lang = "en"
-    title = "filename"
-    tabDepth = 0
-    versionNum = 0.1
-    styleURL = None
-    destDir = './dist/'
-    source_dir = "."
-    out_dir = "."
+    return content
 
-    # here i am using argparse library, that will create help menu
-    parser = argparse.ArgumentParser(
-        description="Will convert txt file into html file",
-        formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=90, width=120))
-    groupGeneral = parser.add_argument_group()
+def format_to_html(file_name, title, content):
 
-    groupGeneral.add_argument('-i', '--input', help='input file location', metavar="FILE")
-    groupGeneral.add_argument('-v', '--version', help='version number', action='store_true')
-    groupGeneral.add_argument('-o', '--output', help='destination to place output file(s)', metavar="DESTDIR")
-    groupGeneral.add_argument('-s', '--stylesheet', help='allow the user to optionally specify URL to a CSS '
-                                                         'stylesheet to be used in the <head> of your generated HTML '
-                                                         'files', metavar='URL' )
-    groupGeneral.add_argument('-l', '--language', help='specify language such as: en, ru ...', metavar='LANG')
-    groupGeneral.add_argument('-e', '--encoding', help="specify page encoding, such as utf-8", metavar='ENCODE')
+    html_template = """<!doctype html>
+        <html lang="en">
+        <head>
+            <meta charset="utf-8">
+            <title>{title}</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+        </head>
+        <body>
+            {bodycont}
+        </body>
+        </html>
+        """
+    return html_template.format(title=title if title else file_name, bodycont=content)
+
+
+def output_result(file_name, html):
+
+    if(os.path.isdir(DIST_FOLDER)):
+        shutil.rmtree(DIST_FOLDER)
+
+    os.mkdir(DIST_FOLDER)
+    file_path = DIST_FOLDER + "/" + file_name.replace(".txt", ".html").replace(".md", ".html")
+    with open(file_path, "w", encoding="utf8") as output_file:
+        result = output_file.write(html)
+    return result
+
+def type_of_supported_file(file_name):
+    if file_name.endswith(".md"):
+        return "md"
+    if file_name.endswith(".txt"):
+        return "txt"
+    return False
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-v", "--version", action="version",
+                        version="%(prog)s 0.1", help="display tool name and version.")
+    parser.add_argument(
+        "-i", "--input", help="specify an input file or folder to be processed.", required=True)
     args = parser.parse_args()
+    input = args.input
 
-    if args.version:
-        print("version: {}".format(versionNum))
-    if args.language:
-        lang = args.language
-    if args.encoding:
-        encode = args.encode
-    if args.output:
-        destDir += args.output
+    all_files = []
+    folder = ""
 
-    if args.input:    # TODO for multiple files can loop over them
-        """
-            this is the main part of the program, where all html conversion happens
-        """
-        print("file name is {}".format(args.input))
 
-        title = args.input
-        outputName = destDir + title +".html"
+    if not type_of_supported_file(input): #then it is probably a directory
+        folder = input + "/"
+        all_files = get_files(folder)
+    else:
+        all_files.append(input)
 
-        Lines = ["<doctype html>",
-                 o_tag("html", 'lang="{}"'.format(lang)),
-                 o_tag("head"),
-                 indent(1) + o_tag('meta','charset="{}"'.format(lang), True),
-                 indent(1) + o_tag("title") + title + clo_tag(),
-                 indent(1) + o_tag("meta", 'content="width=device-width, initial-scale=1"', True)
-                 ]
+    for file in all_files:
+        bodycont = ""
+        file_path = folder + file
+        title = get_grand_title(file_path)
+        if type_of_supported_file(file) == 'txt':
+            bodycont = generate_txt_content(file_path, title)
+        elif type_of_supported_file(file) == 'md':
+            bodycont = generate_md_content(file_path)
+        html = format_to_html(file, title, bodycont)
+        ret = output_result(file, html)
+        if ret:
+            print("success!")
 
-        if args.stylesheet:
-            styleURL = args.stylesheet
-            Lines.append(indent(1) + o_tag("link", 'rel="stylesheet" style="text/css" href="{}"'.format(styleURL), True))
 
-        Lines.extend([clo_tag(), # close head
-                    o_tag("body")
-                     ])
-
-        body = getbody(title, Lines)
-
-        Lines.extend([
-                    clo_tag(), # close body tag
-                    clo_tag() # close html close html tag
-                     ])
-
-        create_html(outputName, Lines)
+main()
