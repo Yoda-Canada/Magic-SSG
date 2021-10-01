@@ -9,15 +9,27 @@ def get_txt_files(directory):
     txt_files = []
     for root, dirs, files in os.walk(directory):
         for file in files:
+            #    file_path = os.path.join(root, file)
             if file.endswith('.txt'):
                 file_path = os.path.join(root, file)
                 txt_files.append(file_path)
     return txt_files
 
 
+def get_md_files(directory):
+    md_files = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            #    file_path = os.path.join(root, file)
+            if file.endswith('.md'):
+                file_path = os.path.join(root, file)
+                md_files.append(file_path)
+    return md_files
+
+
 # Look for a title
 
-def get_title(file_path):
+def get_txt_title(file_path):
     i = 0
     title = ""
     # Read top 3 lines one by one.
@@ -35,7 +47,25 @@ def get_title(file_path):
                     return title
 
 
+def get_md_title(file_path):
+    i = 0
+    title = ""
+    # Read top 3 lines one by one.
+    with open(file_path, "r", encoding="utf8") as input_file:
+        for i in range(3):
+            for line in input_file.readlines():
+                i += 1
+                title = line.strip()
+                if i == 3:
+                    break
+                elif not len(title):
+                    continue
+                elif title.startswith("#") or title.startswith("##") or title.startswith("###"):
+                    return title
+
 # Returns bodycont with html format.
+
+
 def generate_content(file_path, title):
     titled_format = "<h1>{}</h1>\n\n\n{}"
     content = ""
@@ -75,13 +105,24 @@ def format_to_html(file_name, title, content, lang):
     return html_template.format(title=title if title else file_name, bodycont=content, currentlang=lang)
 
 
-def output_result(file_name, html):
+def output_txt_result(file_name, html):
 
     if(os.path.isdir(DIST_FOLDER)):
         shutil.rmtree(DIST_FOLDER)
 
     os.mkdir(DIST_FOLDER)
     file_path = DIST_FOLDER + "/" + file_name.replace(".txt", ".html")
+    with open(file_path, "w", encoding="utf8") as output_file:
+        output_file.write(html)
+
+
+def output_md_result(file_name, html):
+
+    if(os.path.isdir(DIST_FOLDER)):
+        shutil.rmtree(DIST_FOLDER)
+
+    os.mkdir(DIST_FOLDER)
+    file_path = DIST_FOLDER + "/" + file_name.replace(".md", ".html")
     with open(file_path, "w", encoding="utf8") as output_file:
         output_file.write(html)
 
@@ -104,18 +145,33 @@ def main():
     all_files = []
     folder = ""
 
+    # output .md file
+    if not input.endswith(".md"):
+        #    folder = input + "/"
+        all_files = get_md_files(folder)
+    else:
+        all_files.append(input)
+
+    for file in all_files:
+        file_path = folder + file
+        title = get_md_title(file_path)
+        bodycont = generate_content(file_path, title)
+        html = format_to_html(file, title, bodycont, lang)
+        output_md_result(file, html)
+
+    # output .txt file
     if not input.endswith(".txt"):
-        folder = input + "/"
+        #    folder = input + "/"
         all_files = get_txt_files(folder)
     else:
         all_files.append(input)
 
     for file in all_files:
         file_path = folder + file
-        title = get_title(file_path)
+        title = get_txt_title(file_path)
         bodycont = generate_content(file_path, title)
         html = format_to_html(file, title, bodycont, lang)
-        output_result(file, html)
+        output_txt_result(file, html)
 
 
 main()
