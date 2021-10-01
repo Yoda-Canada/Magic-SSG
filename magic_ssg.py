@@ -58,10 +58,10 @@ def generate_content(file_path, title):
             return content
 
 
-def format_to_html(file_name, title, content):
+def format_to_html(file_name, title, content, lang):
 
     html_template = """<!doctype html>
-        <html lang="en">
+        <html lang="{currentlang}">
         <head>
             <meta charset="utf-8">
             <title>{title}</title>
@@ -72,7 +72,7 @@ def format_to_html(file_name, title, content):
         </body>
         </html>
         """
-    return html_template.format(title=title if title else file_name, bodycont=content)
+    return html_template.format(title=title if title else file_name, bodycont=content, currentlang=lang)
 
 
 def output_result(file_name, html):
@@ -92,8 +92,14 @@ def main():
                         version="%(prog)s 0.1", help="display tool name and version.")
     parser.add_argument(
         "-i", "--input", help="specify an input file or folder to be processed.", required=True)
+    parser.add_argument('-l', '--lang', nargs='?', type=str, default='en=CA',
+                        help='Language of the document (default is en=CA)')
     args = parser.parse_args()
     input = args.input
+
+    if (args.lang is not None):
+        langlist = "".join(args.lang)
+        lang = langlist.strip()
 
     all_files = []
     folder = ""
@@ -108,7 +114,7 @@ def main():
         file_path = folder + file
         title = get_title(file_path)
         bodycont = generate_content(file_path, title)
-        html = format_to_html(file, title, bodycont)
+        html = format_to_html(file, title, bodycont, lang)
         output_result(file, html)
 
 
