@@ -1,6 +1,8 @@
 import argparse
 import os
 import shutil
+import re
+import sys
 
 DIST_FOLDER = "dist"
 
@@ -66,7 +68,7 @@ def get_md_title(file_path):
 # Returns bodycont with html format.
 
 
-def generate_content(file_path, title):
+def generate_txt_content(file_path, title):
     titled_format = "<h1>{}</h1>\n\n\n{}"
     content = ""
 
@@ -86,6 +88,38 @@ def generate_content(file_path, title):
             content = content + "</p>"
             content = titled_format.format(title, content)
             return content
+
+
+def generate_md_content(file_path, title):
+    count = 0
+    i = 0
+    global pline1
+    global pline2
+    global pline3
+    pline1 = ""
+    pline2 = ""
+    pline3 = ""
+
+    titled_format = "<h1>{}</h1>\n\n\n{}"
+    content = ""
+
+    with open(file_path, "r", encoding="utf8") as input_file:
+        for lines in input_file.readlines():
+            # the line has italic markdown
+            pline1 = re.sub(r'(_[^\r\n\_].*?_)|(\*[^\r\n\*].*?\*)',
+                            lambda s: "<i>{}</i>".format(s[0][1:-1]), lines)
+            # the line has horizontal rule in markdown
+            pline2 = re.sub(r'(\n|(\n<p>))\s{0,3}((---)|(\*\*\*))\s{0,3}((</p>\n)|\n)',
+                            lambda s: "<hr/>", lines)
+            # the line has bold markdown
+            pline3 = re.sub(r'(__[^\r\n\_].*?__)|(\*\*[^\r\n\*].*?\*\*)',
+                            lambda s: "<b>{}</b>".format(s[0][2:-2]), lines)
+
+        content = pline1 + "</p>" + "\n"
+        content = content + pline3
+        content = "<p>" + content
+        content = titled_format.format(title, content)
+        return content
 
 
 def format_to_html(file_name, title, content, lang):
@@ -155,12 +189,13 @@ def main():
     for file in all_files:
         file_path = folder + file
         title = get_md_title(file_path)
-        bodycont = generate_content(file_path, title)
+        bodycont = generate_md_content(file_path, title)
         html = format_to_html(file, title, bodycont, lang)
         output_md_result(file, html)
 
     # output .txt file
     if not input.endswith(".txt"):
+
         #    folder = input + "/"
         all_files = get_txt_files(folder)
     else:
@@ -169,7 +204,7 @@ def main():
     for file in all_files:
         file_path = folder + file
         title = get_txt_title(file_path)
-        bodycont = generate_content(file_path, title)
+        bodycont = generate_txt_content(file_path, title)
         html = format_to_html(file, title, bodycont, lang)
         output_txt_result(file, html)
 
