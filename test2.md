@@ -1,7 +1,7 @@
 # this is heading level 1
 
-## Text attributes _italic_,
+_italic Text attributes_,
 
 ---
 
-**bold** used for test.
+**bold used for test.**
