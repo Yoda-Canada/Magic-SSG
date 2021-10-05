@@ -97,6 +97,7 @@ def generate_md_content(file_path, title):
 
     with open(file_path, "r", encoding="utf8") as input_file:
         lines = ''.join(input_file.readlines()[2:])
+
         # the line has bold markdown
         content = re.sub(
             '\*\*([^\s\*.]{1}.*?)\*\*|__([^\s_.]{1}.*?)__', r'<strong>\1</strong>', lines)
