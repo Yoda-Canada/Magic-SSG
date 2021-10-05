@@ -92,35 +92,24 @@ def generate_txt_content(file_path, title):
 
 
 def generate_md_content(file_path, title):
-    count = 0
-    i = 0
-    global pline1
-    global pline2
-    global pline3
-    pline1 = ""
-    pline2 = ""
-    pline3 = ""
 
     titled_format = "<h1>{}</h1>\n\n\n{}"
     content = ""
 
     with open(file_path, "r", encoding="utf8") as input_file:
-        for lines in input_file.readlines():
-            # the line has italic markdown
+        lines = ''.join(input_file.readlines()[2:])
 
-            pline1 = re.sub(r'\*([^\s\*.]{1}.*?)\*|_([^\s\_.]{1}.*?)_',
-                            lambda s: "<i>{}</i>".format(s[0][1:-1]), lines)
-            # the line has horizontal rule in markdown
-            pline2 = re.sub(r'(^---$)',
-                            lambda s: "<hr/>".format(s[0]), lines)
+        # the line has bold markdown
+        content = re.sub(
+            '\*\*([^\s\*.]{1}.*?)\*\*|__([^\s_.]{1}.*?)__', r'<strong>\1</strong>', lines)
+        # the line has italic markdown
+        content = re.sub(
+            '\*([^\s\*.]{1}.*?)\*|_([^\s\_.]{1}.*?)_', r'<em>\2</em>', content)
+        # the line has horizontal rule in markdown
+        content = re.sub(
+            '(\n|(\n<p>))\s{0,3}((---)|(\*\*\*))\s{0,3}((</p>\n)|\n)', r'\n<hr/>\n', content)
 
-            # the line has bold markdown
-            pline3 = re.sub(r'(__[^\r\n\_].*?__)|(\*\*[^\r\n\*].*?\*\*)',
-                            lambda s: "<b>{}</b>".format(s[0][2:-2]), lines)
-
-        content = pline1 + "</p>" + "\n"
-        content = content + pline3
-        content = "<p>" + content
+        content = "</p>" + content + "<p>"
         content = titled_format.format(title, content)
         return content
 
