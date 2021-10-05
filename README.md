@@ -12,6 +12,7 @@
 - Allow the input to be a deep tree of files and folders.
 - Allow user to check the tool's version.
 - Allow the language input and SSG can generate the lang attribute on the root <html> element
+- Allow user to supply a JSON formatted configuration file
 
 ## Installation
 
@@ -38,6 +39,9 @@
 5. Input the language
    > ` python magic_ssg.py -i file_name -l language`
 
+6. Input a JSON config file
+   > ` python magic_ssg.py -c file_name`
+
 ## Example 1
 
 ### Full list of features:
@@ -57,3 +61,23 @@
 ### Convert a file named test.txt and select language- Fr
 
 > `python magic_ssg.py -i test.txt -l Fr`
+
+## Example 3
+
+> `python magic_ssg.py -c ssg-config.json`
+> 
+### input file
+
+```js
+// ssg-config.json
+{
+    "input": "./test.txt",
+    "lang": "en-CA"
+}
+```
+
+![Alt Text](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/r2lv22xz6b8byl84cn8r.png)
+
+### output file
+
+![Alt Text](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/r08erike6kspvnx3yd9u.png)
