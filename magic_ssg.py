@@ -106,7 +106,6 @@ def generate_md_content(file_path, title):
     with open(file_path, "r", encoding="utf8") as input_file:
         for lines in input_file.readlines():
             # the line has italic markdown
-
             pline1 = re.sub(r'\*([^\s\*.]{1}.*?)\*|_([^\s\_.]{1}.*?)_',
                             lambda s: "<i>{}</i>".format(s[0][1:-1]), lines)
             # the line has horizontal rule in markdown
