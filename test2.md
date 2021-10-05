@@ -1,4 +1,4 @@
-# This is heading level 1
+# This is heading level 1.
 
 _italic Text attributes_,
 
