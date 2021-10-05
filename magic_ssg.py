@@ -91,14 +91,6 @@ def generate_txt_content(file_path, title):
 
 
 def generate_md_content(file_path, title):
-    count = 0
-    i = 0
-    global pline1
-    global pline2
-    global pline3
-    pline1 = ""
-    pline2 = ""
-    pline3 = ""
 
     titled_format = "<h1>{}</h1>\n\n\n{}"
     content = ""
