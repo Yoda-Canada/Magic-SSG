@@ -171,6 +171,7 @@ def main():
         "-i", "--input", help="specify an input file or folder to be processed.", required=True)
     parser.add_argument('-l', '--lang', nargs='?', type=str, default='en=CA',
                         help='Language of the document (default is en=CA)')
+    parser.add_argument("-c", "--config", help="specify a config file to be processed")
     args = parser.parse_args()
     input = args.input
 
