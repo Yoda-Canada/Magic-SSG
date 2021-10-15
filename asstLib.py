@@ -1,36 +1,25 @@
-import argparse
 import os
 import shutil
 import re
-import sys
-import json
+
 
 DIST_FOLDER = "dist"
 
 
-def get_txt_files(directory):
-    txt_files = []
+def get_files(directory):
+    origin_files = []
     for root, dirs, files in os.walk(directory):
         for file in files:
-            #    file_path = os.path.join(root, file)
             if file.endswith('.txt'):
                 file_path = os.path.join(root, file)
-                txt_files.append(file_path)
-    return txt_files
-
-
-def get_md_files(directory):
-    md_files = []
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            #    file_path = os.path.join(root, file)
-            if file.endswith('.md'):
+                origin_files.append(file_path)
+            elif file.endswith('.md'):
                 file_path = os.path.join(root, file)
-                md_files.append(file_path)
-    return md_files
+                origin_files.append(file_path)
+    return origin_files
 
+    # Look for a title
 
-# Look for a title
 
 def get_txt_title(file_path):
     i = 0
@@ -131,94 +120,13 @@ def format_to_html(file_name, title, content, lang):
     return html_template.format(title=title if title else file_name, bodycont=content, currentlang=lang)
 
 
-def output_txt_result(file_name, html):
-
+def output_result(file_name, html):
     if(os.path.isdir(DIST_FOLDER)):
         shutil.rmtree(DIST_FOLDER)
-
     os.mkdir(DIST_FOLDER)
-    file_path = DIST_FOLDER + "/" + file_name.replace(".txt", ".html")
+    if file_name.endswith(".md"):
+        file_path = DIST_FOLDER + "/" + file_name.replace(".md", ".html")
+    elif file_name.endswith(".txt"):
+        file_path = DIST_FOLDER + "/" + file_name.replace(".txt", ".html")
     with open(file_path, "w", encoding="utf8") as output_file:
         output_file.write(html)
-
-
-def output_md_result(file_name, html):
-
-    if(os.path.isdir(DIST_FOLDER)):
-        shutil.rmtree(DIST_FOLDER)
-
-    os.mkdir(DIST_FOLDER)
-    file_path = DIST_FOLDER + "/" + file_name.replace(".md", ".html")
-    with open(file_path, "w", encoding="utf8") as output_file:
-        output_file.write(html)
-
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-v", "--version", action="version",
-                        version="%(prog)s 0.1", help="display tool name and version.")
-    parser.add_argument(
-        "-i", "--input", help="specify an input file or folder to be processed.")
-    parser.add_argument('-l', '--lang', nargs='?', type=str, default='en=CA',
-                        help='Language of the document (default is en=CA)')
-    parser.add_argument("-c", "--config", help="specify a config file to be processed")
-    args = parser.parse_args()
-    input = args.input
-
-    if args.config is not None:
-        try:
-            with open(args.config, "r", encoding="utf-8") as config_file:
-                config = json.load(config_file)
-                if "input" in config:
-                    input = config["input"]
-                else:
-                    input = None
-                if "lang" in config:
-                    args.lang = config["lang"]
-        except FileNotFoundError:
-            print(f'Error: File "{args.config}" cannot be found!')
-        except json.JSONDecodeError:
-            print(f'Error: File "{args.config} has invalid JSON syntax!" ')
-
-    if input is None:
-        print(f'Error: Input is not found! Please specify a file/folder to be processed.')
-        exit()
-
-    if (args.lang is not None):
-        langlist = "".join(args.lang)
-        lang = langlist.strip()
-
-    all_files = []
-    folder = ""
-
-    # output .md file
-    if not input.endswith(".md"):
-        #    folder = input + "/"
-        all_files = get_md_files(folder)
-    else:
-        all_files.append(input)
-
-    for file in all_files:
-        file_path = folder + file
-        title = get_md_title(file_path)
-        bodycont = generate_md_content(file_path, title)
-        html = format_to_html(file, title, bodycont, lang)
-        output_md_result(file, html)
-
-    # output .txt file
-    if not input.endswith(".txt"):
-
-        #    folder = input + "/"
-        all_files = get_txt_files(folder)
-    else:
-        all_files.append(input)
-
-    for file in all_files:
-        file_path = folder + file
-        title = get_txt_title(file_path)
-        bodycont = generate_txt_content(file_path, title)
-        html = format_to_html(file, title, bodycont, lang)
-        output_txt_result(file, html)
-
-
-main()
