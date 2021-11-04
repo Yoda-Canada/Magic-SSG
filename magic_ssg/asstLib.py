@@ -10,10 +10,10 @@ def get_files(directory):
     origin_files = []
     for root, dirs, files in os.walk(directory):
         for file in files:
-            if file.endswith('.txt'):
+            if file.endswith(".txt"):
                 file_path = os.path.join(root, file)
                 origin_files.append(file_path)
-            elif file.endswith('.md'):
+            elif file.endswith(".md"):
                 file_path = os.path.join(root, file)
                 origin_files.append(file_path)
     return origin_files
@@ -52,8 +52,13 @@ def get_md_title(file_path):
                     break
                 elif not len(title):
                     continue
-                elif title.startswith("#") or title.startswith("##") or title.startswith("###"):
+                elif (
+                    title.startswith("#")
+                    or title.startswith("##")
+                    or title.startswith("###")
+                ):
                     return title
+
 
 # Returns bodycont with html format.
 
@@ -63,7 +68,7 @@ def generate_txt_content(file_path, title):
     content = ""
 
     with open(file_path, "r", encoding="utf8") as input_file:
-        if (title == ""):
+        if title == "":
             content = input_file.read()[4:]
             content = "<p>" + content
             content = content.replace("\n\n", "</p>\n<p>")
@@ -86,17 +91,24 @@ def generate_md_content(file_path, title):
     content = ""
 
     with open(file_path, "r", encoding="utf8") as input_file:
-        lines = ''.join(input_file.readlines()[2:])
+        lines = "".join(input_file.readlines()[2:])
 
         # the line has bold markdown
         content = re.sub(
-            '\*\*([^\s\*.]{1}.*?)\*\*|__([^\s_.]{1}.*?)__', r'<strong>\1</strong>', lines)
+            r"\*\*([^\s\*.]{1}.*?)\*\*|__([^\s_.]{1}.*?)__",
+            r"<strong>\1</strong>",
+            lines,
+        )
         # the line has italic markdown
         content = re.sub(
-            '\*([^\s\*.]{1}.*?)\*|_([^\s\_.]{1}.*?)_', r'<em>\2</em>', content)
+            r"\*([^\s\*.]{1}.*?)\*|_([^\s\_.]{1}.*?)_", r"<em>\2</em>", content
+        )
         # the line has horizontal rule in markdown
         content = re.sub(
-            '(\n|(\n<p>))\s{0,3}((---)|(\*\*\*))\s{0,3}((</p>\n)|\n)', r'\n<hr/>\n', content)
+            r"(\n|(\n<p>))\s{0,3}((---)|(\*\*\*))\s{0,3}((</p>\n)|\n)",
+            r"\n<hr/>\n",
+            content,
+        )
 
         content = "</p>" + content + "<p>"
         content = titled_format.format(title, content)
@@ -117,11 +129,13 @@ def format_to_html(file_name, title, content, lang):
         </body>
         </html>
         """
-    return html_template.format(title=title if title else file_name, bodycont=content, currentlang=lang)
+    return html_template.format(
+        title=title if title else file_name, bodycont=content, currentlang=lang
+    )
 
 
 def output_result(file_name, html):
-    if(os.path.isdir(DIST_FOLDER)):
+    if os.path.isdir(DIST_FOLDER):
         shutil.rmtree(DIST_FOLDER)
     os.mkdir(DIST_FOLDER)
     if file_name.endswith(".md"):
