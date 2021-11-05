@@ -95,17 +95,17 @@ def generate_md_content(file_path, title):
 
         # the line has bold markdown
         content = re.sub(
-            "\*\*([^\s\*.]{1}.*?)\*\*|__([^\s_.]{1}.*?)__",
+            r"\*\*([^\s\*.]{1}.*?)\*\*|__([^\s_.]{1}.*?)__",
             r"<strong>\1</strong>",
             lines,
         )
         # the line has italic markdown
         content = re.sub(
-            "\*([^\s\*.]{1}.*?)\*|_([^\s\_.]{1}.*?)_", r"<em>\2</em>", content
+            r"\*([^\s\*.]{1}.*?)\*|_([^\s\_.]{1}.*?)_", r"<em>\2</em>", content
         )
         # the line has horizontal rule in markdown
         content = re.sub(
-            "(\n|(\n<p>))\s{0,3}((---)|(\*\*\*))\s{0,3}((</p>\n)|\n)",
+            r"(\n|(\n<p>))\s{0,3}((---)|(\*\*\*))\s{0,3}((</p>\n)|\n)",
             r"\n<hr/>\n",
             content,
         )

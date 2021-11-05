@@ -1,4 +1,5 @@
 [flake8]
+line-length = 88
 ignore = W605
 ignore = W501
 ignore = W541
