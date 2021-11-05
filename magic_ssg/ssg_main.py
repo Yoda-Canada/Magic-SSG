@@ -44,7 +44,7 @@ def main():
 
     if input is None:
         print(
-            f"Error: Input is not found! Please specify a file/folder to be processed."
+            f"Error: Input is not found! Please specify a {args.config} to be processed."
         )
         exit()
 
