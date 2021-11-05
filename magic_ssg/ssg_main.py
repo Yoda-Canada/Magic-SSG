@@ -5,14 +5,25 @@ import asstLib
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-v", "--version", action="version",
-                        version="%(prog)s 0.1", help="display tool name and version.")
     parser.add_argument(
-        "-i", "--input", help="specify an input file or folder to be processed.")
-    parser.add_argument('-l', '--lang', nargs='?', type=str, default='en=CA',
-                        help='Language of the document (default is en=CA)')
+        "-v",
+        "--version",
+        action="version",
+        version="%(prog)s 0.1",
+        help="display tool name and version.",
+    )
     parser.add_argument(
-        "-c", "--config", help="specify a config file to be processed")
+        "-i", "--input", help="specify an input file or folder to be processed."
+    )
+    parser.add_argument(
+        "-l",
+        "--lang",
+        nargs="?",
+        type=str,
+        default="en=CA",
+        help="Language of the document (default is en=CA)",
+    )
+    parser.add_argument("-c", "--config", help="specify a config file to be processed")
     args = parser.parse_args()
     input = args.input
 
@@ -32,10 +43,12 @@ def main():
             print(f'Error: File "{args.config} has invalid JSON syntax!" ')
 
     if input is None:
-        print(f'Error: Input is not found! Please specify a file/folder to be processed.')
+        print(
+            f"Error: Input is not found! Please specify a file/folder to be processed."
+        )
         exit()
 
-    if (args.lang is not None):
+    if args.lang is not None:
         langlist = "".join(args.lang)
         lang = langlist.strip()
 
