@@ -1,0 +1,9 @@
+[flake8]
+ignore = W605
+ignore = W501
+ignore = W541
+exclude =
+    __pycache__,
+    dist,
+    nojekyll,
+    img
