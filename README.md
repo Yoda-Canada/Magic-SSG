@@ -30,25 +30,25 @@
 
 1. Generate a .html file from a file or folder:
 
-   > ` python magic_ssg.py -i/--input <file name or folder name>`
+   > ` python magic_ssg/ssg_main.py -i/--input <file name or folder name>`
 
 2. Specify a different output directory using --output or -o.
 
-   > python magic_ssg.py --input <input file name or folder name> --output <out put folder>
+   > ` python magic_ssg/ssg_main.py --input <input file name or folder name> --output <out put folder> `
 
 3. Check the tool's version
 
-   > ` python magic_ssg.py –v/--version`
+   > ` python magic_ssg/ssg_main.py –v/--version`
 
 4. Display how to use the tool
 
-   > ` python magic_ssg.py –h`
+   > ` python magic_ssg/ssg_main.py –h`
 
 5. Input the language
-   > ` python magic_ssg.py -i file_name -l language`
+   > ` python magic_ssg/ssg_main.py -i file_name -l language`
 
 6. Input a JSON config file
-   > ` python magic_ssg.py -c file_name`
+   > ` python magic_ssg/ssg_main.py -c file_name`
 
 <img align="left" src="static\img\Example.png" width="50px" height="50px" />
 
@@ -72,13 +72,13 @@
 
 ### Convert a file named test.txt and select language- Fr
 
-> `python magic_ssg.py -i test.txt -l Fr`
+> `python magic_ssg/ssg_main.py -i test.txt -l Fr`
 
 <img align="left" src="static\img\Example.png" width="50px" height="50px" />
 
 ## Example 3
 
-> `python magic_ssg.py -c ssg-config.json`
+> `python magic_ssg/ssg_main.py -c ssg-config.json`
 > 
 ### input file
 
