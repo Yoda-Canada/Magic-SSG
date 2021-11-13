@@ -2,7 +2,6 @@ import os
 import shutil
 import re
 
-
 DIST_FOLDER = "dist"
 
 
@@ -26,15 +25,15 @@ def get_txt_title(file_path):
     title = ""
     # Read top 3 lines one by one.
     with open(file_path, "r", encoding="utf8") as input_file:
-        for i in range(3):
+        for i in range(4):
             for line in input_file.readlines():
                 i += 1
                 title = line.strip()
-                if i == 3:
+                if i == 4:
                     break
                 elif not len(title) or title.startswith("#"):
                     continue
-                # elif len(title) or title.startswith("#"):
+
                 else:
                     return title
 
@@ -135,6 +134,7 @@ def format_to_html(file_name, title, content, lang):
 
 
 def output_result(file_name, html):
+
     if os.path.isdir(DIST_FOLDER):
         shutil.rmtree(DIST_FOLDER)
     os.mkdir(DIST_FOLDER)

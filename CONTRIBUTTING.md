@@ -20,3 +20,13 @@
 #### How to apply a linter - Flake8
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Flake 8 can be **installed** by running: `python -m pip install flake8`
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Easy to **run** with: `flake8 path/to/code/to/check.py ` or ` flake8 path/to/code/ `
+
+#### Testing
+
+I suggest to use [Pytest](https://docs.pytest.org/en/6.2.x/) as our testing framework. You can intall it using the following command in your command line:
+- `pip install -U pytest`                                                        
+
+Check that you installed the correct version:
+- `pytest --version`
+
+If you want contribute to the test part, please find my automation tests in MAGIC-SSG/tests/ folder and test files name format is (`test_*.py` or `*_test.py`).
