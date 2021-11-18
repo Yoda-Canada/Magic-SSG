@@ -2,3 +2,4 @@ _pychache_
 dist/
 test.txt
 test2.md
+tests/_pychache_/

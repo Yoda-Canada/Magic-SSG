@@ -31,11 +31,3 @@ def test_get_txt_title4():
     result = get_txt_title(file_path)
     expecte_result = None
     assert result == expecte_result
-
-
-# test the first line is the first sentence of the first paragraph.
-def test_get_txt_title5():
-    file_path = "./tests/testfiles/The_Adventure_of_the_Six_Napoleans.txt"
-    result = get_txt_title(file_path)
-    expecte_result = None
-    assert result == expecte_result, " It isn't a bug, and it need to enhance."

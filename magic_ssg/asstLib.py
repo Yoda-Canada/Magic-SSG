@@ -63,7 +63,7 @@ def get_md_title(file_path):
 
 
 def generate_txt_content(file_path, title):
-    titled_format = "<h1>{}</h1>\n\n\n{}"
+    titled_format = "<h1>{}</h1>\n{}"
     content = ""
 
     with open(file_path, "r", encoding="utf8") as input_file:
@@ -77,7 +77,7 @@ def generate_txt_content(file_path, title):
         else:
             content = input_file.read()
             content = content.split("\n", 3)[3]
-            content = "<p>" + content
+            content = "               <p>" + content
             content = content.replace("\n\n", "</p>\n<p>")
             content = content + "</p>"
             content = titled_format.format(title, content)
