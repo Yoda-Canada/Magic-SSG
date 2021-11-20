@@ -32,7 +32,7 @@ def test_md_title_with_one_pound():
 
 # test the title with two pound keys
 def test_md_title_with_two_pound():
-    file_path = "./tests/testfiles/test2.md"
+    file_path = "./tests/testfiles/test2-1.md"
     result = get_md_title(file_path)
     expecte_result = ""
     assert result == expecte_result
