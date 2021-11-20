@@ -43,19 +43,22 @@ def get_md_title(file_path):
     title = ""
     # Read top 3 lines one by one.
     with open(file_path, "r", encoding="utf8") as input_file:
-        for i in range(3):
-            for line in input_file.readlines():
-                i += 1
-                title = line.strip()
-                if i == 3:
-                    break
-                elif not len(title):
-                    continue
-                elif (
+        # for i in range(3):
+        #     i +=1
+        for line in input_file.readlines():
+            i += 1
+            title = line.strip()
+            if i == 4:
+                break
+            elif len(title):
+                if (
                     title.startswith("#")
                     or title.startswith("##")
                     or title.startswith("###")
                 ):
+                    title = ""
+                    return title
+                else:
                     return title
 
 
